@@ -36,8 +36,6 @@ public:
 	void DrawDebugPiece();
 	void TestRotate();
 
-	void TestRotateFB();
-
 	void MoveLeft();
 	void MoveRight();
 
