@@ -6,9 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "Block.generated.h"
 
+using namespace std;
 UCLASS()
-class TETRISUSFX01_API ABlock : public AActor
-{
+class TETRISUSFX01_API ABlock : public AActor {
 	GENERATED_BODY()
 	
 public:	
