@@ -85,6 +85,7 @@ void ABoard::Tick(float DeltaTime) {
 
 // Called to bind functionality to input
 void ABoard::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
+
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction("Rotate", IE_Pressed, this, &ABoard::Rotate);	
@@ -92,9 +93,6 @@ void ABoard::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	PlayerInputComponent->BindAction("MoveRight", IE_Pressed, this, &ABoard::MoveRight);
 	PlayerInputComponent->BindAction("MoveDown", IE_Pressed, this, &ABoard::MoveDown);
 	PlayerInputComponent->BindAction("MoveDownToEnd", IE_Pressed, this, &ABoard::MoveDownToEnd);
-	//PlayerInputComponent->BindAction("NewPiece", IE_Pressed, this, &ABoard::NewPiece);
-	//PlayerInputComponent->BindAction("CheckLine", IE_Pressed, this, &ABoard::CheckLine);
-
 }
 
 void ABoard::Rotate() {
@@ -194,7 +192,6 @@ void ABoard::CheckLine() {
 		TArray<struct FOverlapResult> OutOverlaps;
 		FCollisionShape CollisionShape;
 		CollisionShape.SetBox(FVector(4.0f, 49.0f, 4.0f));
-		//DrawDebugBox(GetWorld(), Location, FVector(4.5f, 49.5f, 4.5f), FColor::Purple, false, 1, 0, 1);
 		FCollisionQueryParams Params;
 		FCollisionResponseParams ResponseParam;
 		bool b = GetWorld()->OverlapMultiByChannel(OutOverlaps,
@@ -208,6 +205,7 @@ void ABoard::CheckLine() {
 			GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, TEXT("Find FULL LINE"));
 			for (auto&& Result : OutOverlaps) {
 				Result.GetActor()->Destroy();
+				CountPieces = CountPieces++;
 			}
 			MoveDownFromLine(z);
 
@@ -246,4 +244,31 @@ void ABoard::MoveDownToEnd() {
 			GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Blue, TEXT("Wrong status for MoveDownToEnd"));
 			break;
 	}
+}
+
+void ABoard::Attach (AActor *observer) {
+	Pieces.Add (observer);
+}
+
+void ABoard::Detach (AActor *RemoveObserver) {
+	Pieces.Remove (RemoveObserver);
+}	
+
+void ABoard::Notify () {
+	for (AActor *Actor : Pieces) {
+			//Cast each of them to a concrete Subscriber
+		IObserver *Sub = Cast<IObserver> (Actor);
+		if (Sub) {
+			//Notify each of them that something has changed, so they can executheir own routine
+			Sub->Update (this);
+		}
+	}
+}
+
+void ABoard::SetCantidadPiezas (int cantidad) {
+	CountPieces = cantidad;
+}
+
+void ABoard::CambioCantidad () {
+	Notify ();
 }

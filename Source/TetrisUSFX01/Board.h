@@ -5,11 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Piece.h"
+
+#include "Observer.h"
+#include "PiecesPublisher.h"
 #include "Board.generated.h"
 
 UCLASS()
-class TETRISUSFX01_API ABoard : public APawn
-{
+class TETRISUSFX01_API ABoard : public APawn {
 	GENERATED_BODY()
 
 public:
@@ -21,6 +23,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+
+	int CountPieces = 0;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -56,4 +61,14 @@ private:
 
 	bool CheckGameOver();
 
+public:
+	virtual void Attach (AActor *observer);
+	virtual void Detach (AActor *RemoveObserver);
+	virtual void Notify ();
+
+	void SetCantidadPiezas (int cantidad);
+
+	void CambioCantidad ();
+private:
+	TArray<AActor *> Pieces = TArray<AActor *> ();
 };
