@@ -28,7 +28,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-	virtual void Update (class ABoard* board);
+	virtual void Update (class ABoard* board) override;
 
 	void SetCount (ABoard* myCountPieces);
 };
